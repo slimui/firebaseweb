@@ -181,11 +181,13 @@
        },
 
        savePost: function(key, downloadURL) {
+         var userName = this.account.userName || this.user.displayName || 'Username missing :(';
          var post = {
            location: this.location || null,
-           userEmail: this.user.email,
+           userEmail: this.account.userEmail || this.user.email || 'Email missing :(',
            userId: this.user.uid,
-           userName: this.user.displayName || 'User',
+           userName: userName,
+           profileImage: this.account.userImage || this.user.photoURL || 'User profile image missing :(',
            userImage: downloadURL
          };
 
@@ -195,7 +197,7 @@
              Like: 1,
              userComment: this.description,
              userId: this.user.uid,
-             userName: this.user.displayName || null
+             userName: userName
            };
            var likes = {};
 

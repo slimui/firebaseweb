@@ -66,6 +66,7 @@
            computed: '_auth(firebase)'
          },
          user: Object,
+         account: Object,
          username: String,
          password: String,
          loginDisabled: {
@@ -97,6 +98,15 @@
              type: 'setUser',
              user: user
            });
+           if (user) {
+             this.firebase.database().ref('UsersDB').child(user.uid).once('value')
+              .then(function(snap) {
+                this.dispatch({
+                  type: 'setAccount',
+                  account: snap.val()
+                });
+              }.bind(this));
+           }
          }.bind(this));
        },
 

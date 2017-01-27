@@ -9,12 +9,15 @@
   "dependencies": {
     "redux": "^3.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "firebase-admin": "^4.0.6"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install-local": "npm install && bower install",
     "deploy": "npm install && bower install && polymer build && firebase deploy",
-    "lodash": "cd src/third-party && lodash exports=global include=cloneDeep"
+    "lodash": "cd src/third-party && lodash exports=global include=cloneDeep",
+    "migrate-users": "node bin/migrate-users.js"
   },
   "repository": {
     "type": "git",

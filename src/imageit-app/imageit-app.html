@@ -49,7 +49,7 @@
 
     <div id="views" view$="[[view]]">
       <login-view id="loginView" firebase="[[firebase]]"></login-view>
-      <form-view id="formView" firebase="[[firebase]]" user="[[user]]" categories="[[categories]]"></form-view>
+      <form-view id="formView" firebase="[[firebase]]" user="[[user]]" account="[[account]]" categories="[[categories]]"></form-view>
     </div>
 
     <paper-toast id="toast"></paper-toast>
@@ -75,6 +75,10 @@
         user: {
           type: Object,
           statePath: 'user'
+        },
+        account: {
+          type: Object,
+          statePath: 'account'
         },
         categories: {
           type: Array,
