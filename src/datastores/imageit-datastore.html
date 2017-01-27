@@ -6,7 +6,8 @@
   var DefaultState = {
     view: 'login',
     user: false,
-    account: false
+    account: false,
+    categories: []
   };
   var ImageitStore = Redux.createStore(function(state, action) {
     if (action.type == '@@redux/INIT') {
@@ -32,6 +33,9 @@
         break;
       case 'setAccount':
         state.account = action.account;
+        break;
+      case 'setCategories':
+        state.categories = action.categories;
         break;
     }
 

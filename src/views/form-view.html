@@ -1,4 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../shared-styles.html">
 
 <dom-module id="form-view">
@@ -7,12 +12,192 @@
       :host {
         display: block;
       }
+
+      #wrapper {
+        height: 100vh;
+      }
+
+      #form-wrapper {
+        width: 25rem;
+        max-width: calc(100% - 2rem);
+      }
+
+      #preview-wrapper {
+        background: transparent;
+      }
+
+      #preview {
+        max-width: 100%;
+      }
+
+      #form {
+        padding: 1rem;
+      }
+
+      #file {
+        display: none;
+      }
     </style>
-    form
+    
+    <div id="wrapper" class="layout vertical center-justified center">
+      <div id="form-wrapper" class="layout horizontal wrap">
+        <div id="preview-wrapper">
+          <img id="preview" src$="[[previewSrc]]">  
+        </div>
+        <form id="form" class="flex layout vertical" is="iron-form">
+          <paper-input id="description" label="Item description/link" value="{{description}}" type="text" autofocus></paper-input>
+          <paper-input id="location" label="Location" value="{{location}}" type="text"></paper-input>
+          <paper-dropdown-menu label="Category">
+            <paper-listbox id="categoryListbox" class="dropdown-content" selected="[[category]]">
+              <template is="dom-repeat" items="[[categories]]" as="category">
+                <paper-item key="[[category.key]]">[[category.value]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input id="file" is="iron-input" type="file" onchange="this.parentElement.parentElement.parentElement.parentElement.setFile(this)">
+          <div class="layout horizontal justified">
+            <label id="label" for="file" class="layout horizontal end-justified">
+              <paper-button class="secondary" raised>Select Image</paper-button>
+              <!--<span class="flex"></span>-->
+            </label>
+            <paper-button raised class="primary" on-click="upload" disabled$="[[uploadDisabled]]">Upload</paper-button>  
+          </div>
+        </form>
+      </div>
+    </div>
+      
   </template>
   <script>
     Polymer({
        is: "form-view",
+
+       properties: {
+         firebase: Object,
+         postsRef: {
+           type: Object,
+           computed: '_postsRef(firebase)'
+         },
+         uploadsRef: {
+           type: Object,
+           computed: '_uploadsRef(firebase)'
+         },
+         user: Object,
+         categories: {
+          type: Array,
+          value: []  
+         },
+         category: {
+           type: Number,
+           value: 0
+         },
+         file: Object,
+         description: String,
+         previewSrc: String,
+         uploadDisabled: {
+           type: Boolean,
+           value: true
+         }
+       },
+
+       // Observers
+       _postsRef: function(firebase) {
+         return firebase.database().ref('Posts');
+       },
+
+       _uploadsRef: function(firebase) {
+         return firebase.storage().ref('posts');
+       },
+
+       // Functions
+       setFile: function (el) {
+         this.set('file', el.files[0]);
+         this.handleFile(this.file);
+       },
+
+       handleFile: function (file) {
+         var reader = new FileReader();
+
+         reader.onload = function(e) {
+           this.previewSrc = e.target.result;
+           this.uploadDisabled = false;
+         }.bind(this);
+
+         reader.readAsDataURL(file);
+       },
+
+       getNewImageRef: function(key, suffix) {
+         return this.uploadsRef.child(key + '.' + suffix);
+       },
+
+       getPushKey: function() {
+         return this.postsRef.push().key
+       },
+
+       upload: function() {
+         var key = this.getPushKey();
+         var imageRef = this.getNewImageRef(key, this.file.name.split('.').pop());
+         var metadata = {};
+
+         if (this.description) metadata.description = this.description;
+         if (this.location) metadata.location = this.location;
+
+         var uploadTask = imageRef.put(this.file, metadata);
+        
+         return uploadTask.then(function(snapshot) {
+            return this.savePost(key, snapshot.downloadURL);
+          }.bind(this))
+          .then(function() {
+            this.fire('alert', 'Upload success');
+            this.clearForm();
+            this.$.description.focus();
+          }.bind(this))
+          .catch(function(err) {
+            this.fire('error', err);
+          }.bind(this));
+        
+        //  uploadTask.on('state_changed', function(snapshot) {
+        //    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //    console.log('Upload is ' + progress + '% done');
+        //  });
+       },
+
+       savePost: function(key, downloadURL) {
+         var post = {
+           location: this.location || null,
+           userEmail: this.user.email,
+           userId: this.user.uid,
+           userName: this.user.displayName,
+           userImage: downloadURL
+         };
+
+         if (this.description) {
+           var comment = {
+             Dislike: 0,
+             Like: 1,
+             userComment: this.description,
+             userId: this.user.uid,
+             userName: this.user.displayName || null
+           };
+           var likes = {};
+
+           likes[this.getPushKey()] = this.user.uid;
+           comment.likes = likes;
+
+           post.comments = {};
+           post.comments[this.getPushKey()] = comment;
+         }
+
+         if (typeof this.category == 'number' && this.categories.length) {
+           post.categories = this.categories[this.category].value;
+         }
+
+         return this.postsRef.child(key).set(post);
+       },
+
+       clearForm: function() {
+         this.previewSrc = '';
+         this.description = '';
+       }
     });
   </script>
 </dom-module>

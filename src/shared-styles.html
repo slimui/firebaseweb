@@ -1,6 +1,6 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <dom-module id="shared-styles">
   <template>
@@ -10,15 +10,24 @@
 
         --color-light: #FFFFFF;
         --color-dark: #090909;
-        --color-light-fancy: #D3FFE9;
+        --color-gray: #494949;
 
-        --color-primary: #8DDBE0;
-        --color-secondary: #4B5043;
-        --color-tertiary: #9BC4BC;
+        --color-primary: #04395E;
+        --color-secondary: #494949;
+        --color-tertiary: #F9627D;
+
+        --color-success: #04395E;
+        --color-failure: #F9627D;
 
         --color-google: #db3236;
         --color-facebook: #3b5998;
         --color-twitter: #0084b4;
+
+        --paper-input-container-focus-color: rgba(255, 255, 255, 1);
+        --paper-input-container-input-color: var(--color-dark);
+        --paper-input-container-color: var(--color-dark);
+        --paper-input-container-focus-color: var(--color-primary);
+        --paper-input-container-input-color: var(--color-dark);
       }
 
       paper-button.google {
@@ -38,7 +47,7 @@
 
       paper-button.primary {
         background-color: var(--color-primary);
-        color: var(--color-dark);
+        color: var(--color-light);
       }
 
       paper-button.secondary {

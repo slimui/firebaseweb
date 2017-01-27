@@ -48,10 +48,9 @@
 
     <div id="views" view$="[[view]]">
       <login-view id="loginView" firebase="[[firebase]]"></login-view>
-      <form-view id="formView" firebase="[[firebase]]"></form-view>
+      <form-view id="formView" firebase="[[firebase]]" user="[[user]]" categories="[[categories]]"></form-view>
     </div>
 
-    
     <paper-toast id="toast"></paper-toast>
     
   </template>
@@ -75,12 +74,37 @@
         user: {
           type: Object,
           statePath: 'user'
+        },
+        categories: {
+          type: Array,
+          statePath: 'categories'
         }
       },
 
       attached: function() {
         window.ImageitStore.subscribe(function() {
           this.state = this.getState();
+        }.bind(this));
+      },
+
+      // Observers
+      observers: [
+        '_categories(firebase)'
+      ],
+
+      _categories: function(firebase) {
+        return firebase.database().ref('Categories').once('value', function(snap) {
+          var categoriesObj = snap.val();
+          var categories = Object.keys(categoriesObj).map(function(key) {
+            return {
+              key: key,
+              value: categoriesObj[key]
+            };
+          });
+          this.dispatch({
+            type: 'setCategories',
+            categories: categories
+          });
         }.bind(this));
       },
 
@@ -91,8 +115,8 @@
         logout: 'logout'
       },
 
-      _alert: function(err) {
-        this.showToast(err.toString());
+      _alert: function(e) {
+        this.showToast(e.detail.toString());
       },
 
       // Functions
