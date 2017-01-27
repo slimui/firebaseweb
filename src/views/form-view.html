@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../shared-styles.html">
 
 <dom-module id="form-view">
@@ -37,6 +38,15 @@
       #file {
         display: none;
       }
+
+      paper-progress {
+        width: 100%;
+        padding: 1rem 0 2rem;
+      }
+
+      /*paper-progress[value="0"] {
+        visibility: hidden;
+      }*/
     </style>
     
     <div id="wrapper" class="layout vertical center-justified center">
@@ -55,6 +65,7 @@
             </paper-listbox>
           </paper-dropdown-menu>
           <input id="file" is="iron-input" type="file" onchange="this.parentElement.parentElement.parentElement.parentElement.setFile(this)">
+          <paper-progress id="progress" value$="[[progress]]"></paper-progress>
           <div class="layout horizontal justified">
             <label id="label" for="file" class="layout horizontal end-justified">
               <paper-button class="secondary" raised>Select Image</paper-button>
@@ -87,6 +98,10 @@
           value: []  
          },
          category: {
+           type: Number,
+           value: 0
+         },
+         progress: {
            type: Number,
            value: 0
          },
@@ -144,21 +159,25 @@
          var uploadTask = imageRef.put(this.file, metadata);
         
          return uploadTask.then(function(snapshot) {
+            this.progress = 100;
             return this.savePost(key, snapshot.downloadURL);
           }.bind(this))
           .then(function() {
             this.fire('alert', 'Upload success');
             this.clearForm();
+            this.clearProgressBar();
             this.$.description.focus();
           }.bind(this))
           .catch(function(err) {
             this.fire('error', err);
+            this.clearProgressBar();
           }.bind(this));
         
-        //  uploadTask.on('state_changed', function(snapshot) {
-        //    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //    console.log('Upload is ' + progress + '% done');
-        //  });
+         uploadTask.on('state_changed', function(snapshot) {
+           var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+           console.log('Upload is ' + progress + '% done');
+           this.progress = progress;
+         });
        },
 
        savePost: function(key, downloadURL) {
@@ -166,7 +185,7 @@
            location: this.location || null,
            userEmail: this.user.email,
            userId: this.user.uid,
-           userName: this.user.displayName,
+           userName: this.user.displayName || 'User',
            userImage: downloadURL
          };
 
@@ -192,6 +211,12 @@
          }
 
          return this.postsRef.child(key).set(post);
+       },
+
+       clearProgressBar: function() {
+         setTimeout(function() {
+           this.progress = 0;
+         }.bind(this), 1000);
        },
 
        clearForm: function() {

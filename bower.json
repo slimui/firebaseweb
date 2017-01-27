@@ -15,7 +15,8 @@
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
     "paper-item": "PolymerElements/paper-item#^1.2.1",
     "paper-listbox": "PolymerElements/paper-listbox#^1.1.2",
-    "font-roboto": "PolymerElements/font-roboto#^1.0.1"
+    "font-roboto": "PolymerElements/font-roboto#^1.0.1",
+    "paper-progress": "PolymerElements/paper-progress#^1.0.11"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

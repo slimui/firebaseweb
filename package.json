@@ -13,7 +13,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install-local": "npm install && bower install",
-    "deploy": "polymer build && firebase deploy",
+    "deploy": "npm install && bower install && polymer build && firebase deploy",
     "lodash": "cd src/third-party && lodash exports=global include=cloneDeep"
   },
   "repository": {
