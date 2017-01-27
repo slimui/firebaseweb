@@ -1,0 +1,56 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="shared-styles">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+
+        --color-light: #FFFFFF;
+        --color-dark: #090909;
+        --color-light-fancy: #D3FFE9;
+
+        --color-primary: #8DDBE0;
+        --color-secondary: #4B5043;
+        --color-tertiary: #9BC4BC;
+
+        --color-google: #db3236;
+        --color-facebook: #3b5998;
+        --color-twitter: #0084b4;
+      }
+
+      paper-button.google {
+        background-color: var(--color-google);
+        color: var(--color-light);
+      }
+
+      paper-button.facebook {
+        background-color: var(--color-facebook);
+        color: var(--color-light);
+      }
+
+      paper-button.twitter {
+        background-color: var(--color-twitter);
+        color: var(--color-light);
+      }
+
+      paper-button.primary {
+        background-color: var(--color-primary);
+        color: var(--color-dark);
+      }
+
+      paper-button.secondary {
+        background-color: var(--color-secondary);
+        color: var(--color-light);
+      }
+
+      paper-button.tertiary {
+        background-color: var(--color-tertiary);
+        color: var(--color-dark);
+      }
+
+    </style>
+  </template>
+</dom-module>

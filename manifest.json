@@ -1,0 +1,7 @@
+{
+  "name": "imageit",
+  "short_name": "imageit",
+  "description": "Backend access to Imageit",
+  "start_url": "/",
+  "display": "standalone"
+}

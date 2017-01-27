@@ -1,0 +1,28 @@
+{
+  "name": "firebaseweb",
+  "version": "1.0.0",
+  "description": "Backend access to Imageit",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "redux": "^3.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "install": "npm install && bower install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lodash": "cd src/third-party && lodash exports=global include=cloneDeep"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EsbeeLabs/firebaseweb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EsbeeLabs/firebaseweb/issues"
+  },
+  "homepage": "https://github.com/EsbeeLabs/firebaseweb#readme"
+}

@@ -1,0 +1,110 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="../controllers/nav-controller.html">
+<link rel="import" href="../views/login-view.html">
+<link rel="import" href="../views/form-view.html">
+<link rel="import" href="../datastores/imageit-datastore.html">
+
+<script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBGuv7I6699HahEhk34l0wkrc2mUHnbdo0",
+    authDomain: "imageit-4fd5b.firebaseapp.com",
+    databaseURL: "https://imageit-4fd5b.firebaseio.com",
+    storageBucket: "imageit-4fd5b.appspot.com",
+    messagingSenderId: "148700010403"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<dom-module id="imageit-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #views {
+        height: calc(100vh - 4rem);
+      }
+
+      #view > * {
+        height: 100%;
+      }
+
+      [view="login"] form-view {
+        display: none;
+      }
+
+      [view="form"] login-view {
+        display: none;
+      }
+
+    </style>
+
+    <nav-controller id="nav-controller" view="[[view]]"></nav-controller>
+
+    <div id="views" view$="[[view]]">
+      <login-view id="loginView" firebase="[[firebase]]"></login-view>
+      <form-view id="formView" firebase="[[firebase]]"></form-view>
+    </div>
+
+    
+    <paper-toast id="toast"></paper-toast>
+    
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'imageit-app',
+
+      behaviors: [ImageitDatastoreBehavior],
+
+      properties: {
+        firebase: {
+          type: Object,
+          value: window.firebase,
+        },
+        view: {
+          type: String,
+          statePath: 'view'
+        },
+        user: {
+          type: Object,
+          statePath: 'user'
+        }
+      },
+
+      attached: function() {
+        window.ImageitStore.subscribe(function() {
+          this.state = this.getState();
+        }.bind(this));
+      },
+
+      // Listeners
+      listeners: {
+        error: '_alert',
+        alert: '_alert',
+        logout: 'logout'
+      },
+
+      _alert: function(err) {
+        this.showToast(err.toString());
+      },
+
+      // Functions
+      showToast: function(text) {
+        this.$.toast.text = text;
+        this.$.toast.show();
+      },
+
+      logout: function() {
+        this.$.loginView.logout();
+      }
+
+    });
+  </script>
+</dom-module>

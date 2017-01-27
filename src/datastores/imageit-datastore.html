@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
+<script src="../../node_modules/redux/dist/redux.min.js"></script>
+<script src="../third-party/lodash.custom.min.js"></script>
+
+<script>
+  var DefaultState = {
+    view: 'login',
+    user: false,
+    account: false
+  };
+  var ImageitStore = Redux.createStore(function(state, action) {
+    if (action.type == '@@redux/INIT') {
+      try {
+        state = JSON.parse(localStorage.getItem('QuiverStoreState'));
+      } catch (err) {
+        console.log('localStorage error', err);
+      }
+    }
+
+    if (!state) { // Catch nulls empty localStorage as well as undefineds
+      state = DefaultState;
+    }
+
+    state = _.cloneDeep(state);
+
+    switch (action.type) {
+      case 'setView':
+        state.view = action.view;
+        break;
+      case 'setUser':
+        state.user = action.user;
+        break;
+      case 'setAccount':
+        state.account = action.account;
+        break;
+    }
+
+    state.view = state.user ? 'form' : 'login';
+
+    return state;
+  });
+  var ImageitDatastoreBehavior = PolymerRedux(ImageitStore);
+
+  ImageitStore.subscribe(function () {
+    localStorage.setItem('ImageitStoreState', JSON.stringify(ImageitStore.getState()));
+  });
+</script>

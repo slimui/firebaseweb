@@ -1,0 +1,144 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/gold-email-input/gold-email-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="../datastores/imageit-datastore.html">
+
+<dom-module id="login-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      #login-wrapper {
+        height: 100vh;
+      }
+
+      form, #button-wrapper {
+        width: 25rem;
+        max-width: calc(100% - 2rem);
+      }
+
+      #separator {
+        padding: 2rem;
+      }
+
+      paper-input, gold-email-input {
+        width: 100%;
+      }
+
+      paper-button {
+        width: 30%;
+      }
+    </style>
+    <div id="login-wrapper" class="layout vertical center-justified center">
+      <form id="form" is="iron-form">
+        <div class="layout vertical center">
+          <gold-email-input label="Email" value="{{email}}" required auto-validate></gold-email-input>
+          <paper-input label="Password" value="{{password}}" type="password" required auto-validate></paper-input>
+          <paper-button class="primary" raised disabled$="[[loginDisabled]]" on-click="login">Login</paper-button>
+        </div>
+      </form>
+      <div id="separator" class="layout horizontal center-justified">
+        <strong>Or log in with...</strong>
+      </div>
+      <div id="button-wrapper" class="layout horizontal justified">
+        <paper-button class="google" raised on-click="google">Google</paper-button>
+        <paper-button class="facebook" raised on-click="facebook">Facebook</paper-button>
+        <paper-button class="twitter" raised on-click="twitter">Twitter</paper-button>
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+       is: "login-view",
+
+       behaviors: [ImageitDatastoreBehavior],
+
+       properties: {
+         firebase: Object,
+         auth: {
+           type: Object,
+           computed: '_auth(firebase)'
+         },
+         user: Object,
+         username: String,
+         password: String,
+         loginDisabled: {
+           type: Boolean,
+           computed: '_loginDisabled(username, password)'
+         }
+       },
+
+       // Observers
+       observers: [
+         '_onAuthStateChanged(auth)'
+       ],
+
+       _auth: function(firebase) {
+         return firebase.auth();
+       },
+
+       _loginDisabled: function(username, password) {
+         return !username || !password;
+       },
+
+       _onAuthStateChanged: function(auth) {
+         if (!auth || this.listening) return;
+
+         this.listening = true;
+
+         auth.onAuthStateChanged(function(user) {
+           this.dispatch({
+             type: 'setUser',
+             user: user
+           });
+         }.bind(this));
+       },
+
+       // Functions
+       login: function() {
+         this.auth.signInWithEmailAndPassword(this.email, this.password)
+          .catch(function(err) {
+            this.fire('error', err);
+          }.bind(this));
+       },
+
+       google: function() {
+         var provider = new this.firebase.auth.GoogleAuthProvider();
+         provider.addScope('profile');
+         provider.addScope('email');
+         this.signInWithProvider(provider);
+       },
+
+       facebook: function() {
+         var provider = new this.firebase.auth.FacebookAuthProvider();
+         provider.addScope('public_profile');
+         provider.addScope('email');
+         provider.addScope('user_friends');
+         this.signInWithProvider(provider);
+       },
+
+       twitter: function() {
+         var provider = new this.firebase.auth.TwitterAuthProvider();
+         this.signInWithProvider(provider);
+       },
+
+       signInWithProvider: function(provider) {
+         return this.auth.signInWithPopup(provider)
+          .catch(function(err) {
+            this.fire('error', err);
+          }.bind(this));
+       },
+
+       logout: function() {
+         this.auth.signOut();
+       }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../shared-styles.html">
+
+<dom-module id="nav-controller">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      [view="login"] #logout {
+        visibility: hidden;
+      }
+
+    </style>
+    <div id="nav-wrapper" class="layout horizontal end-justified" view$="[[view]]">
+      <paper-icon-button id="logout" icon="power-settings-new" on-click="logout"></paper-icon-button>
+    </div>
+  </template>
+  <script>
+    Polymer({
+       is: "nav-controller",
+
+       properties: {
+         view: String,
+         showLogout: {
+           type: Boolean,
+           computed: '_showLogout(view)'
+         }
+       },
+
+       _showLogout: function(view) {
+         return view != 'login'
+       },
+
+       // Functions
+       logout: function() {
+         this.fire('logout');
+       }
+    });
+  </script>
+</dom-module>
