@@ -101,9 +101,11 @@
            if (user) {
              this.firebase.database().ref('UsersDB').child(user.uid).once('value')
               .then(function(snap) {
+                var account = snap.val();
+                if (!account) return this.fire('error', 'Account not found. Log in using the app to create an account.');
                 this.dispatch({
                   type: 'setAccount',
-                  account: snap.val()
+                  account: account
                 });
               }.bind(this));
            }
