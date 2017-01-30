@@ -183,7 +183,7 @@
        savePost: function(key, downloadURL) {
          var userName = this.account.userName || this.user.displayName || 'Username missing :(';
          var post = {
-           location: this.location || null,
+           location: this.location || 'Secret Location',
            userEmail: this.account.userEmail || this.user.email || 'Email missing :(',
            userId: this.user.uid,
            userName: userName,
@@ -201,7 +201,7 @@
            };
            var likes = {};
 
-           likes[this.getPushKey()] = this.user.uid;
+           likes[this.getPushKey()] = { userId: this.user.uid };
            comment.likes = likes;
 
            post.comments = {};
