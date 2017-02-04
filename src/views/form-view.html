@@ -221,7 +221,7 @@
            post.categories = this.categories[this.category].value;
          }
 
-         updates['/Users/' + this.user.uid + '/posts/' + key] = true;
+         updates['/Users/' + this.user.uid + '/posts/' + key + '/postId'] = key;
          updates['/Posts/' + key] = post;
 
          return this.ref.update(updates);
