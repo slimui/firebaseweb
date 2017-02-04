@@ -84,9 +84,13 @@
 
        properties: {
          firebase: Object,
+         ref: {
+           type: Object,
+           computed: '_ref(firebase)'
+         },
          postsRef: {
            type: Object,
-           computed: '_postsRef(firebase)'
+           computed: '_postsRef(ref)'
          },
          uploadsRef: {
            type: Object,
@@ -115,8 +119,12 @@
        },
 
        // Observers
-       _postsRef: function(firebase) {
-         return firebase.database().ref('Posts');
+       _ref: function(firebase) {
+         return firebase.database().ref();
+       },
+
+       _postsRef: function(ref) {
+         return ref.child('Posts');
        },
 
        _uploadsRef: function(firebase) {
@@ -190,6 +198,7 @@
            profileImage: this.account.userImage || this.user.photoURL || 'User profile image missing :(',
            userImage: downloadURL
          };
+         var updates = {};
 
          if (this.description) {
            var comment = {
@@ -212,7 +221,10 @@
            post.categories = this.categories[this.category].value;
          }
 
-         return this.postsRef.child(key).set(post);
+         updates['/Users/' + this.user.uid + '/posts/' + key] = true;
+         updates['/Posts/' + key] = post;
+
+         return this.ref.update(updates);
        },
 
        clearProgressBar: function() {
