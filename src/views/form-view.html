@@ -218,7 +218,7 @@
          }
 
          if (typeof this.category == 'number' && this.categories.length) {
-           post.categories = this.categories[this.category].value;
+           post.category = this.categories[this.category].value;
          }
 
          updates['/Users/' + this.user.uid + '/posts/' + key + '/postId'] = key;
