@@ -58,7 +58,7 @@
           <paper-input id="description" label="Item description/link" value="{{description}}" type="text" autofocus></paper-input>
           <paper-input id="location" label="Location" value="{{location}}" type="text"></paper-input>
           <paper-dropdown-menu label="Category">
-            <paper-listbox id="categoryListbox" class="dropdown-content" selected="[[category]]">
+            <paper-listbox id="categoryListbox" class="dropdown-content" selected="{{category}}">
               <template is="dom-repeat" items="[[categories]]" as="category">
                 <paper-item key="[[category.key]]">[[category.value]]</paper-item>
               </template>
