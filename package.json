@@ -18,7 +18,7 @@
     "deploy": "npm install && bower install && polymer build && firebase deploy",
     "lodash": "cd src/third-party && lodash exports=global include=cloneDeep",
     "migrate-users": "node bin/migrate-users.js",
-    "serve": "polymer serve -p 8686"
+    "start": "polymer serve -p 8686"
   },
   "repository": {
     "type": "git",

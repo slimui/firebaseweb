@@ -265,7 +265,7 @@
 
           post.comments = {};
           post.comments[this.getPushKey()] = comment;
-        });
+        }.bind(this));
 
         if (typeof this.category == 'number' && this.categories.length) {
           post.category = this.categories[this.category].value;
@@ -274,7 +274,7 @@
         updates['/Users/' + this.user.uid + '/posts/' + key + '/postId'] = key;
         updates['/Posts/' + key] = post;
 
-        console.log('updates', updats);
+        console.log('updates', updates);
 
         debugger
 
