@@ -103,6 +103,7 @@
               .then(function(snap) {
                 var account = snap.val();
                 if (!account) return this.fire('error', 'Account not found. Log in using the app to create an account.');
+                if (!account.verified) return this.fire('error', 'Account not verified.');
                 this.dispatch({
                   type: 'setAccount',
                   account: account
