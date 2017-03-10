@@ -19,9 +19,11 @@
 
 
 
+
       #wrapper {
         height: 100vh;
       }
+
 
 
 
@@ -34,9 +36,11 @@
 
 
 
+
       #preview-wrapper {
         background: transparent;
       }
+
 
 
 
@@ -48,6 +52,7 @@
 
 
 
+
       #form {
         padding: 1rem;
       }
@@ -55,9 +60,11 @@
 
 
 
+
       #file {
         display: none;
       }
+
 
 
 
@@ -250,11 +257,13 @@
           post.comments = {};
         }
 
-        this.descriptions.forEach(function (description) {
+        this.descriptions.filter(function(description) {
+          return !!description;
+        }).forEach(function (description) {
           var comment = {
             Dislike: 0,
             Like: 1,
-            userComment: this.description,
+            userComment: description,
             userId: this.user.uid,
             userName: userName
           };
@@ -263,7 +272,6 @@
           likes[this.getPushKey()] = { userId: this.user.uid };
           comment.likes = likes;
 
-          post.comments = {};
           post.comments[this.getPushKey()] = comment;
         }.bind(this));
 
@@ -273,10 +281,6 @@
 
         updates['/Users/' + this.user.uid + '/posts/' + key + '/postId'] = key;
         updates['/Posts/' + key] = post;
-
-        console.log('updates', updates);
-
-        debugger
 
         return this.ref.update(updates);
       },
@@ -290,12 +294,16 @@
       clearForm: function () {
         this.previewSrc = '';
         this.description = '';
+        this.removeDescriptions();
+        this.focusOnDescription();
       },
 
       addDescription: function () {
-        this.push('descriptions', this.description);
-        this.description = '';
-        this.focusOnDescription();
+        if (this.description) {
+          this.push('descriptions', this.description);
+          this.description = '';
+          this.focusOnDescription();
+        }
       },
 
       removeDescription: function (e) {
@@ -303,6 +311,10 @@
         var index = this.getParentElIndex(target);
         this.splice('descriptions', index, 1);
         this.focusOnDescription();
+      },
+
+      removeDescriptions: function () {
+        this.splice('descriptions', 0, this.descriptions.length);
       },
 
       getParentElIndex: function (el) {
