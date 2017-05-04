@@ -21,7 +21,7 @@
       }
 
       #form-wrapper {
-        width: 25rem;
+        width: 30rem;
         max-width: calc(100% - 2rem);
       }
 
@@ -48,6 +48,12 @@
       /*paper-progress[value="0"] {
         visibility: hidden;
       }*/
+
+      #category {
+        --paper-input-container-input: {
+          font-size: 14px;
+        }
+      }
     </style>
 
     <div id="wrapper" class="layout vertical center-justified center">
@@ -57,8 +63,7 @@
         </div>
         <form id="form" class="flex layout vertical" is="iron-form">
           <paper-input id="location" label="Location" value="{{location}}" type="text"></paper-input>
-
-          <paper-dropdown-menu label="Category">
+          <paper-dropdown-menu id="category" label="Category">
             <paper-listbox id="categoryListbox" class="dropdown-content" selected="{{category}}">
               <template is="dom-repeat" items="[[categories]]" as="category">
                 <paper-item key="[[category.key]]">[[category.value]]</paper-item>
