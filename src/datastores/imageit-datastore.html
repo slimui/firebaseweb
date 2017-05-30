@@ -27,6 +27,7 @@
     switch (action.type) {
       case 'setView':
         state.view = action.view;
+        state.account = undefined;
         break;
       case 'setUser':
         state.user = action.user;

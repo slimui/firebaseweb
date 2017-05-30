@@ -15,7 +15,8 @@
       }
 
     </style>
-    <div id="nav-wrapper" class="layout horizontal end-justified" view$="[[view]]">
+    <div id="nav-wrapper" class="layout horizontal end-justified center" view$="[[view]]">
+      <span>[[account.userEmail]]</span>
       <paper-icon-button id="logout" icon="power-settings-new" on-click="logout"></paper-icon-button>
     </div>
   </template>
@@ -25,6 +26,7 @@
 
        properties: {
          view: String,
+         account: Object,
          showLogout: {
            type: Boolean,
            computed: '_showLogout(view)'

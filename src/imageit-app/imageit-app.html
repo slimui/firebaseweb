@@ -45,7 +45,7 @@
 
     </style>
 
-    <nav-controller id="nav-controller" view="[[view]]"></nav-controller>
+    <nav-controller id="nav-controller" view="[[view]]" account="[[account]]"></nav-controller>
 
     <div id="views" view$="[[view]]">
       <login-view id="loginView" firebase="[[firebase]]"></login-view>
@@ -132,6 +132,7 @@
 
       logout: function() {
         this.$.loginView.logout();
+        this.dispatch({type: 'setView', view: 'login'});
       }
 
     });
