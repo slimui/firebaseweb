@@ -323,7 +323,7 @@
 
       descriptionsIncludeLink: function(descriptions) {
         return !!descriptions.find(function(description) {
-          return !!description.match(/(http:\/\/|mailto:)/);
+          return !!description.match(/(http(s?):\/\/|mailto:)/);
         });
       },
 
