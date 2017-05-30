@@ -89,9 +89,6 @@
             <paper-input id="description" class="flex" always-float-label label="Item description/link" value="{{description}}" type="text" autofocus></paper-input>
             <paper-icon-button icon="add-circle-outline" on-click="addDescription" disabled$="[[!description]]"></paper-icon-button>
           </div>
-          <div hidden$="[[!uploadDisabled]]">
-            <span>One link and two hashtags required</span>
-          </div>
           <paper-progress id="progress" value$="[[progress]]"></paper-progress>
 
           <div class="layout horizontal justified">
@@ -100,6 +97,10 @@
               <!--<span class="flex"></span>-->
             </label>
             <paper-button raised class="primary" on-click="upload" disabled$="[[uploadDisabled]]">Upload</paper-button>
+          </div>
+
+          <div hidden$="[[!uploadDisabled]]" flex style="margin-top: 1rem;">
+            <span>One link and two hashtags required. Make sure to click (+) after entering the last item.</span>
           </div>
 
         </form>
