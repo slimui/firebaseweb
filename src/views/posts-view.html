@@ -1,0 +1,109 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="../datastores/imageit-datastore.html">
+
+<dom-module id="posts-view">
+  <template>
+    <style include="shared-styles">
+       :host {
+        display: block;
+      }
+
+      paper-card {
+        margin: 1rem;
+        width: 300px;
+        
+        --paper-card-header-image: {
+          min-height: 300px;
+        }
+
+        --paper-card-content: {
+          @apply --layout-vertical;
+          @apply --layout-center;
+        }
+        
+        --paper-card-actions: {
+          @apply --layout-horizontal;
+          @apply --layout-center-justified;
+        }
+      }
+
+      .post-title {
+        font-weight: bold;
+      }
+
+      .post-comments {
+        list-style: none;
+        font-size: .75rem;
+        padding: 0;
+      }
+    </style>
+
+    <div id="posts" class="layout horizontal wrap center-justified">
+      <template is="dom-repeat" items="[[posts]]" as="post">
+
+        <paper-card image="[[post.userImage]]" elevation="1" animated-shadow="false">
+          <div class="card-content">
+            <div class="post-title">[[post.category]] @ [[post.location]]</div>
+            <ul class="post-comments">
+              <template is="dom-repeat" items="[[post.comments]]" as="comment">
+                <li>[[comment.userComment]]</li>
+              </template>
+            </ul>
+          </div>
+          <div class="card-actions">
+            <paper-button key="[[post.$id]]" on-click="edit">Edit</paper-button>
+          </div>
+        </paper-card>
+
+      </template>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: "posts-view",
+
+      behaviors: [ImageitDatastoreBehavior],
+
+      properties: {
+        firebase: Object,
+        user: Object,
+        account: Object,
+        postsRef: {
+          type: Object,
+          computed: '_postsRef(firebase, user.uid)'
+        },
+        posts: {
+          type: Array,
+          statePath: 'posts'
+        }
+      },
+
+      // Observers
+      observers: [
+        '_listenToPostsRef(postsRef)'
+      ],
+
+      _postsRef: function (firebase, uid) {
+        if (!this.postsRef) {
+          return firebase.database().ref('Posts').orderByChild('userId').equalTo(uid);
+        } else {
+          return this.postsRef;
+        }
+      },
+
+      _listenToPostsRef: function (postsRef) {
+        postsRef.on('value', function (snap) {
+          this.dispatch({
+            type: 'setPosts',
+            posts: snap.val()
+          });
+        }.bind(this));
+      }
+
+    });
+  </script>
+</dom-module>

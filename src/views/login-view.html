@@ -108,6 +108,10 @@
                   type: 'setAccount',
                   account: account
                 });
+                this.dispatch({
+                  type: 'setView',
+                  view: 'form'
+                });
               }.bind(this));
            }
          }.bind(this));

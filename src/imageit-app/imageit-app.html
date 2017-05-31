@@ -4,6 +4,7 @@
 <link rel="import" href="../controllers/nav-controller.html">
 <link rel="import" href="../views/login-view.html">
 <link rel="import" href="../views/form-view.html">
+<link rel="import" href="../views/posts-view.html">
 <link rel="import" href="../datastores/imageit-datastore.html">
 
 <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
@@ -35,21 +36,22 @@
         height: 100%;
       }
 
-      [view="login"] form-view {
+      #views > * {
         display: none;
       }
 
-      [view="form"] login-view {
-        display: none;
+      #views[view="login"] login-view,  #views[view="form"] form-view, #views[view="posts"] posts-view {
+        display: inherit;
       }
 
     </style>
 
     <nav-controller id="nav-controller" view="[[view]]" account="[[account]]"></nav-controller>
 
-    <div id="views" view$="[[view]]">
+    <div id="views" view$="[[view]]" style="margin-top: 4rem;">
       <login-view id="loginView" firebase="[[firebase]]"></login-view>
       <form-view id="formView" firebase="[[firebase]]" user="[[user]]" account="[[account]]" categories="[[categories]]"></form-view>
+      <posts-view id="postsView" firebase="[[firebase]]" user="[[user]]" account="[[account]]"></posts-view>
     </div>
 
     <paper-toast id="toast"></paper-toast>

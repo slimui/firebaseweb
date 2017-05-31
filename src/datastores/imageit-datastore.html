@@ -27,7 +27,9 @@
     switch (action.type) {
       case 'setView':
         state.view = action.view;
-        state.account = undefined;
+        if (state.view == 'login') {
+          state.account = undefined;
+        }
         break;
       case 'setUser':
         state.user = action.user;
@@ -38,9 +40,25 @@
       case 'setCategories':
         state.categories = action.categories;
         break;
+      case 'setPosts':
+        let posts = flattenFirebaseCollection(action.posts);
+
+        posts.forEach(function(post) {
+          post.comments = flattenFirebaseCollection(post.comments || {});
+        });
+        state.posts = posts;
+        break;
     }
 
-    state.view = state.account ? 'form' : 'login';
+    function flattenFirebaseCollection(collection) {
+      let list = [];
+      for (let key in collection) {
+        let obj = collection[key];
+        obj.$key = key;
+        list.push(obj);
+      }
+      return list;
+    }
 
     return state;
   });

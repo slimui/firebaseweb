@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../shared-styles.html">
+<link rel="import" href="../datastores/imageit-datastore.html">
 
 <dom-module id="nav-controller">
   <template>
@@ -13,16 +14,31 @@
       [view="login"] #logout {
         visibility: hidden;
       }
+      
+      [view="form"] #back {
+        visibility: hidden;
+      }
+      
+      [view="posts"] #go-to-posts {
+        visibility: hidden;
+      }
 
     </style>
-    <div id="nav-wrapper" class="layout horizontal end-justified center" view$="[[view]]">
-      <span>[[account.userEmail]]</span>
-      <paper-icon-button id="logout" icon="power-settings-new" on-click="logout"></paper-icon-button>
+    <div id="nav-wrapper" class="layout horizontal justified center" view$="[[view]]">
+      <div class="flex">
+        <paper-icon-button id="back" icon="arrow-back" on-click="goToForm"></paper-icon-button>
+      </div>
+      <div class="layout horizontal center">
+        <a id="go-to-posts" on-click="goToPosts">[[account.userEmail]]</a>
+        <paper-icon-button id="logout" icon="power-settings-new" on-click="logout"></paper-icon-button>
+      </div>
     </div>
   </template>
   <script>
     Polymer({
        is: "nav-controller",
+
+       behaviors: [ImageitDatastoreBehavior],
 
        properties: {
          view: String,
@@ -40,7 +56,17 @@
        // Functions
        logout: function() {
          this.fire('logout');
+       },
+
+       goToPosts: function() {
+         this.dispatch({type: 'setView', view: 'posts'});
+       },
+
+       goToForm: function() {
+         this.dispatch({type: 'setView', view: 'form'});
        }
+
+
     });
   </script>
 </dom-module>
