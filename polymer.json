@@ -1,21 +1,22 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/imageit-app.html",
+  "shell": "src/imageit-app/imageit-app.html",
   "fragments": [
     "src/views/form-view.html",
+    "src/views/posts-view.html",
     "src/views/login-view.html"
   ],
-  "sourceGlobs": [
+  "sources": [
     "src/**/*",
     "images/**/*",
     "bower.json"
   ],
-  "includeDependencies": [
+  "extraDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
     "bower_components/paper-toast/paper-toast.html",
     "bower_components/paper-icon-button/paper-icon-button.html",
     "bower_components/paper-behaviors/paper-inky-focus-behavior.html",
-    "bower_components/font-roboto/font-roboto.html",
+    "bower_components/font-roboto/roboto.html",
     "bower_components/iron-icons/iron-icons.html"
   ]
 }

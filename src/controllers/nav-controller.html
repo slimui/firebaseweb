@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../shared-styles.html">
@@ -16,7 +17,7 @@
       }
       
       [view="form"] #back {
-        visibility: hidden;
+        display: none;
       }
       
       [view="posts"] #go-to-posts {
@@ -27,9 +28,10 @@
     <div id="nav-wrapper" class="layout horizontal justified center" view$="[[view]]">
       <div class="flex">
         <paper-icon-button id="back" icon="arrow-back" on-click="goToForm"></paper-icon-button>
+        <paper-button id="go-to-posts" on-click="goToPosts">View Posts</paper-button>
       </div>
       <div class="layout horizontal center">
-        <a id="go-to-posts" on-click="goToPosts">[[account.userEmail]]</a>
+        <span>[[account.userEmail]]</span>
         <paper-icon-button id="logout" icon="power-settings-new" on-click="logout"></paper-icon-button>
       </div>
     </div>
