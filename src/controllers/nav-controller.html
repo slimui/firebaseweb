@@ -23,6 +23,14 @@
       [view="posts"] .hide-posts {
         visibility: hidden;
       }
+      
+      [view="edit"] .hide-posts {
+        visibility: hidden;
+      }
+
+      #go-to-posts {
+        margin-top: 1px;
+      }
 
     </style>
     <div id="nav-wrapper" class="layout horizontal justified center" view$="[[view]]">
@@ -67,7 +75,6 @@
        goToForm: function() {
          this.dispatch({type: 'setView', view: 'form'});
        }
-
 
     });
   </script>

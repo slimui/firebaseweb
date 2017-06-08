@@ -1,0 +1,173 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="../datastores/imageit-datastore.html">
+
+<dom-module id="edit-view">
+  <template>
+    <style include="shared-styles">
+       :host {
+        display: block;
+      }
+
+      paper-card {
+        margin: 1rem;
+
+        --paper-card-content: {
+          @apply --layout-vertical;
+          @apply --layout-center;
+        }
+
+        --paper-card-actions: {
+          @apply --layout-horizontal;
+          @apply --layout-end-justified;
+          padding: 1rem;
+        }
+      }
+
+      .post-title {
+        font-weight: bold;
+      }
+
+      .post-comments {
+        list-style: none;
+        font-size: .75rem;
+        padding: 0;
+      }
+
+      .post-details {
+        padding: 1rem;
+      }
+    </style>
+
+    <div style="text-align: center;">
+      
+      <paper-card elevation="1" animated-shadow="false">
+        <div class="card-content">
+          <div class="layout horizontal wrap">
+            <div class="flex">
+              <iron-image src="[[post.userImage]]" preload sizing="cover" style="width: 300px; height: 300px;"></iron-image>
+            </div>
+            <div class="post-details layout vertical center-justified">
+              <div class="post-title">[[post.category]] @ [[post.location]]</div>
+              <ul class="post-comments">
+                <template is="dom-repeat" items="[[editing.comments]]" as="comment">
+                  <li>
+                    <paper-input label="Edit comment" value="{{comment.userComment::input}}" type="text" on-value-changed="handleValueChanged" autofocus></paper-input>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <paper-button key="[[post.$key]]" on-click="update" disabled$="[[disabled]]">Update</paper-button>
+        </div>
+      </paper-card>
+
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: "edit-view",
+
+      behaviors: [ImageitDatastoreBehavior],
+
+      properties: {
+        firebase: Object,
+        postsRef: {
+          type: Object,
+          computed: '_postsRef(firebase)'
+        },
+        key: {
+          type: String,
+          statePath: 'editKey'
+        },
+        post: {
+          type: Object,
+          statePath: 'post'
+        },
+        editing: {
+          type: Object,
+          statePath: 'editing'
+        },
+        disabled: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      // Observers
+      observers: ['getPost(postsRef, key)'],
+
+      _postsRef: function (firebase) {
+        return firebase.database().ref('Posts');
+      },
+
+      getPost: function (postsRef, key) {
+        postsRef.child(key).once('value').then(function (snap) {
+          this.dispatch({ type: 'setPost', post: snap.val(), key: key });
+        }.bind(this));
+      },
+
+
+      // Functions
+      update: function () {
+        const updates = this.editing.comments.reduce(function (updates, comment) {
+          updates[this.key + '/comments/' + comment.$key + '/userComment'] = comment.userComment;
+          return updates;
+        }.bind(this), {});
+
+        this.postsRef.update(updates)
+          .then(function () {
+            return this.getPost(this.postsRef, this.key);
+          }.bind(this))
+          .then(function () {
+            this.fire('alert', 'Update complete');
+            this.dispatch({type: 'setView', view: 'posts'});
+          }.bind(this));
+      },
+
+      handleValueChanged: function (e) {
+        setTimeout(function () {
+          this.validate();
+        }.bind(this));
+      },
+
+      validate: function () {
+        if (this.hasChanged(this.editing, this.post) && this.hasRequirements(this.editing)) {
+          this.disabled = false;
+        } else {
+          this.disabled = true;
+        }
+        return !this.disabled;
+      },
+
+      hasChanged: function (a, b) {
+        const aComments = this.extractComments(a);
+        const bComments = this.extractComments(b);
+        return !_.isEqual(aComments, bComments);
+      },
+
+
+      hasRequirements: function (editing) {
+        const comments = this.extractComments(editing);
+        const descriptionsIncludeLink = window.formView.descriptionsIncludeLink;
+        const descriptionsIncludeTwoHashtags = window.formView.descriptionsIncludeTwoHashtags;
+        return descriptionsIncludeLink(comments) && descriptionsIncludeTwoHashtags(comments);
+      },
+
+      extractComments: function (post) {
+        return post.comments.map(function (comment) {
+          return comment.userComment;
+        });
+      }
+
+    });
+  </script>
+</dom-module>

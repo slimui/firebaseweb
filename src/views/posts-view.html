@@ -54,7 +54,7 @@
             </ul>
           </div>
           <div class="card-actions">
-            <paper-button key="[[post.$id]]" on-click="edit">Edit</paper-button>
+            <paper-button key="[[post.$key]]" on-click="edit">Edit</paper-button>
           </div>
         </paper-card>
 
@@ -102,8 +102,11 @@
             posts: snap.val()
           });
         }.bind(this));
-      }
+      },
 
+      edit: function(e) {
+        this.dispatch({type: 'setView', view: 'edit', key: e.target.key});
+      }
     });
   </script>
 </dom-module>

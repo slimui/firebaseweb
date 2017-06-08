@@ -72,6 +72,10 @@
          loginDisabled: {
            type: Boolean,
            computed: '_loginDisabled(username, password)'
+         },
+         view: {
+           type: String,
+           statePath: 'view'
          }
        },
 
@@ -108,10 +112,12 @@
                   type: 'setAccount',
                   account: account
                 });
-                this.dispatch({
-                  type: 'setView',
-                  view: 'form'
-                });
+                if (this.view == 'login') {
+                  this.dispatch({
+                    type: 'setView',
+                    view: 'form'
+                  });
+                }
               }.bind(this));
            }
          }.bind(this));

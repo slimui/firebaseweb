@@ -12,7 +12,7 @@
   var ImageitStore = Redux.createStore(function(state, action) {
     if (action.type == '@@redux/INIT') {
       try {
-        state = JSON.parse(localStorage.getItem('QuiverStoreState'));
+        state = JSON.parse(localStorage.getItem('ImageitStoreState'));
       } catch (err) {
         console.log('localStorage error', err);
       }
@@ -27,6 +27,7 @@
     switch (action.type) {
       case 'setView':
         state.view = action.view;
+        state.editKey = action.key;
         if (state.view == 'login') {
           state.account = undefined;
         }
@@ -47,6 +48,13 @@
           post.comments = flattenFirebaseCollection(post.comments || {});
         });
         state.posts = posts;
+        break;
+      case 'setPost':
+        let post = action.post;
+        post.$key = action.key;
+        post.comments = flattenFirebaseCollection(post.comments || {});
+        state.post = post;
+        state.editing = _.cloneDeep(post);
         break;
     }
 
