@@ -44,7 +44,7 @@
     </style>
 
     <div style="text-align: center;">
-      
+
       <paper-card elevation="1" animated-shadow="false">
         <div class="card-content">
           <div class="layout horizontal wrap">
@@ -55,10 +55,17 @@
               <div class="post-title">[[post.category]] @ [[post.location]]</div>
               <ul class="post-comments">
                 <template is="dom-repeat" items="[[editing.comments]]" as="comment">
-                  <li>
-                    <paper-input label="Edit comment" value="{{comment.userComment::input}}" type="text" on-value-changed="handleValueChanged" autofocus></paper-input>
+                  <li class="layout horizontal center">
+                    <paper-input class="flex" label="Edit comment" value="{{comment.userComment::input}}" type="text" on-value-changed="handleValueChanged"
+                      autofocus></paper-input>
+                    <paper-icon-button index="[[index]]" icon="remove-circle-outline" on-click="removeDescription"></paper-icon-button>
                   </li>
                 </template>
+                <li class="layout horizontal center">
+                  <paper-input id="description" class="flex" always-float-label label="Item description/link" value="{{description}}" type="text"
+                    autofocus></paper-input>
+                  <paper-icon-button icon="add-circle-outline" on-click="addDescription" disabled$="[[!description]]"></paper-icon-button>
+                </li>
               </ul>
             </div>
           </div>
@@ -80,6 +87,8 @@
 
       properties: {
         firebase: Object,
+        user: Object,
+        account: Object,
         postsRef: {
           type: Object,
           computed: '_postsRef(firebase)'
@@ -129,7 +138,7 @@
           }.bind(this))
           .then(function () {
             this.fire('alert', 'Update complete');
-            this.dispatch({type: 'setView', view: 'posts'});
+            this.dispatch({ type: 'setView', view: 'posts' });
           }.bind(this));
       },
 
@@ -166,6 +175,48 @@
         return post.comments.map(function (comment) {
           return comment.userComment;
         });
+      },
+
+      addDescription: function () {
+        const description = this.description;
+        var userName = this.account.userName || this.user.displayName || 'Username missing :(';
+
+        this.description = '';
+        this.$.description.focus();
+
+        this.getPostRef(this.key).child('comments').push({
+          Dislike: 0,
+          Like: 0,
+          userComment: description,
+          userId: this.user.uid,
+          userName: userName
+        }).then(() => this.refreshPost());
+      },
+
+      removeDescription: function (e) {
+        const button = e.target.parentElement;
+        const index = button.index;
+        const commentKey = this.post.comments[index].$key;
+        const newDescriptions = this.post.comments.slice(0).map(comment => comment.userComment);
+
+        newDescriptions.splice(index, 1);
+
+        const formView = app.$.formView;
+        const isValid = formView.descriptionsIncludeLink(newDescriptions) && formView.descriptionsIncludeTwoHashtags(newDescriptions);
+
+        if (isValid) {
+          return this.getPostRef(this.key).child('comments').child(commentKey).remove().then(() => this.refreshPost());
+        } else {
+          this.fire('error', 'Cannot delete comment, because at least one link and two hashtags are required');
+        }
+      },
+
+      refreshPost: function () {
+        return this.getPost(this.postsRef, this.key);
+      },
+
+      getPostRef: function (key) {
+        return this.postsRef.child(this.key);
       }
 
     });
