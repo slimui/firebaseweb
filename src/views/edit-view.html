@@ -71,7 +71,7 @@
           </div>
         </div>
         <div class="card-actions">
-          <paper-button key="[[post.$key]]" on-click="update" disabled$="[[disabled]]">Update</paper-button>
+          <paper-button key="[[post.$key]]" on-click="update" disabled$="[[disabled]]">Update Now</paper-button>
         </div>
       </paper-card>
 
@@ -154,6 +154,7 @@
         } else {
           this.disabled = true;
         }
+        // console.log('disabled', this.disabled)
         return !this.disabled;
       },
 
