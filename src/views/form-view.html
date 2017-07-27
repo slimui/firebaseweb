@@ -59,6 +59,10 @@
       [hidden] {
         display: none;
       }
+
+      img {
+        max-width: 100%;
+      }
     </style>
 
     <div id="wrapper" class="layout vertical center-justified center">
@@ -80,13 +84,15 @@
 
           <template is="dom-repeat" items="[[descriptions]]" as="description">
             <div index="[[index]]" class="layout horizontal justified center">
-              <paper-input class="flex" always-float-label label="Item description/link" value="{{description}}" type="text" autofocus on-value-changed="handleDescriptionChange"></paper-input>
+              <paper-input class="flex" always-float-label label="Item description/link" value="{{description}}" type="text" autofocus
+                on-value-changed="handleDescriptionChange"></paper-input>
               <paper-icon-button icon="remove-circle-outline" on-click="removeDescription"></paper-icon-button>
             </div>
           </template>
 
           <div class="layout horizontal justified center">
-            <paper-input id="description" class="flex" always-float-label label="Item description/link" value="{{description}}" type="text" autofocus></paper-input>
+            <paper-input id="description" class="flex" always-float-label label="Item description/link" value="{{description}}" type="text"
+              autofocus></paper-input>
             <paper-icon-button icon="add-circle-outline" on-click="addDescription" disabled$="[[!description]]"></paper-icon-button>
           </div>
           <paper-progress id="progress" value$="[[progress]]"></paper-progress>
@@ -101,6 +107,11 @@
 
           <div hidden$="[[!uploadDisabled]]" flex style="margin-top: 1rem;">
             <span>One link and two hashtags required. Make sure to click (+) after entering the last item.</span>
+          </div>
+
+          <div class="layout vertical center">
+            <h3>Example Upload</h3>
+            <img src="/images/sampleuploadimage.png" alt="">
           </div>
 
         </form>
@@ -169,11 +180,11 @@
         return firebase.storage().ref('posts');
       },
 
-      _uploadDisabled: function(previewSrc, descriptions) {
+      _uploadDisabled: function (previewSrc, descriptions) {
         return !previewSrc || !this.descriptionsIncludeLink(descriptions) || !this.descriptionsIncludeTwoHashtags(descriptions);
       },
 
-      handleDescriptionChange: function() {
+      handleDescriptionChange: function () {
         this.changedFlag++;
       },
 
@@ -322,14 +333,14 @@
         this.$.description.focus();
       },
 
-      descriptionsIncludeLink: function(descriptions) {
-        return !!descriptions.find(function(description) {
+      descriptionsIncludeLink: function (descriptions) {
+        return !!descriptions.find(function (description) {
           return !!description.match(/(http(s?):\/\/|mailto:)/);
         });
       },
 
-      descriptionsIncludeTwoHashtags: function(descriptions) {
-        const withHashtags = descriptions.filter(function(description) {
+      descriptionsIncludeTwoHashtags: function (descriptions) {
+        const withHashtags = descriptions.filter(function (description) {
           return description.match(/#\w/);
         });
         return withHashtags.length >= 2;
