@@ -9,22 +9,27 @@
 <link rel="import" href="../datastores/imageit-datastore.html">
 
 <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
+<script src="/__/firebase/init.js"></script>
 <script>
   // Initialize Firebase
+  debugger
   var config = {
-//     apiKey: "",
-//     authDomain: "",
-//     databaseURL: "",
-//     storageBucket: "",
-//     messagingSenderId: ""
+    apiKey: "AIzaSyBGuv7I6699HahEhk34l0wkrc2mUHnbdo0",
+    authDomain: "imageit-4fd5b.firebaseapp.com",
+    databaseURL: "https://imageit-4fd5b.firebaseio.com",
+    storageBucket: "imageit-4fd5b.appspot.com",
+    messagingSenderId: "148700010403"
   };
-  firebase.initializeApp(config);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(config);
+  }
+
 </script>
 
 <dom-module id="imageit-app">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
 
@@ -33,21 +38,20 @@
         margin-top: -3rem;
       }
 
-      #view > * {
+      #view>* {
         height: 100%;
       }
 
-      #views > * {
+      #views>* {
         display: none;
       }
 
-      #views[view="login"] login-view,  
-      #views[view="form"] form-view, 
-      #views[view="posts"] posts-view, 
+      #views[view="login"] login-view,
+      #views[view="form"] form-view,
+      #views[view="posts"] posts-view,
       #views[view="edit"] edit-view {
         display: inherit;
       }
-
     </style>
 
     <nav-controller id="nav-controller" view="[[view]]" account="[[account]]"></nav-controller>
@@ -60,7 +64,7 @@
     </div>
 
     <paper-toast id="toast"></paper-toast>
-    
+
   </template>
 
   <script>
@@ -93,8 +97,8 @@
         }
       },
 
-      attached: function() {
-        window.ImageitStore.subscribe(function() {
+      attached: function () {
+        window.ImageitStore.subscribe(function () {
           this.state = this.getState();
         }.bind(this));
       },
@@ -104,10 +108,10 @@
         '_categories(firebase)'
       ],
 
-      _categories: function(firebase) {
-        return firebase.database().ref('Categories').once('value', function(snap) {
+      _categories: function (firebase) {
+        return firebase.database().ref('Categories').once('value', function (snap) {
           var categoriesObj = snap.val();
-          var categories = Object.keys(categoriesObj).map(function(key) {
+          var categories = Object.keys(categoriesObj).map(function (key) {
             return {
               key: key,
               value: categoriesObj[key]
@@ -127,19 +131,19 @@
         logout: 'logout'
       },
 
-      _alert: function(e) {
+      _alert: function (e) {
         this.showToast(e.detail.toString());
       },
 
       // Functions
-      showToast: function(text) {
+      showToast: function (text) {
         this.$.toast.text = text;
         this.$.toast.show();
       },
 
-      logout: function() {
+      logout: function () {
         this.$.loginView.logout();
-        this.dispatch({type: 'setView', view: 'login'});
+        this.dispatch({ type: 'setView', view: 'login' });
       }
 
     });
