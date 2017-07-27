@@ -3,6 +3,9 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../shared-styles.html">
 <link rel="import" href="../datastores/imageit-datastore.html">
 
@@ -53,6 +56,13 @@
             </div>
             <div class="post-details layout vertical center-justified">
               <div class="post-title">[[post.category]] @ [[post.location]]</div>
+              <paper-dropdown-menu id="category" label="Category">
+                <paper-listbox id="categoryListbox" class="dropdown-content" selected="{{category}}" on-selected-changed="handleValueChanged">
+                  <template is="dom-repeat" items="[[categories]]" as="category">
+                    <paper-item key="[[category.key]]">[[category.value]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
               <ul class="post-comments">
                 <template is="dom-repeat" items="[[editing.comments]]" as="comment">
                   <li class="layout horizontal center">
@@ -108,11 +118,16 @@
         disabled: {
           type: Boolean,
           value: true
-        }
+        },
+        categories: {
+          type: Array,
+          value: []
+        },
+        category: Number,
       },
 
       // Observers
-      observers: ['getPost(postsRef, key)'],
+      observers: ['getPost(postsRef, key)', '_loadPostCategory(post.category, categories)', '_category(category, categories)'],
 
       _postsRef: function (firebase) {
         return firebase.database().ref('Posts');
@@ -124,6 +139,22 @@
         }.bind(this));
       },
 
+      _loadPostCategory: function (category, categories) {
+        const foundCategory = categories.find(x => category == x.value);
+        if (foundCategory && foundCategory.key) {
+          this.debounce('edit-category', function () {
+            this.category = foundCategory.key;
+          }.bind(this), 500);
+        }
+      },
+
+      _category: function (category, categories) {
+        const foundCategory = this.categories.find(x => +x.key == category);
+        if (foundCategory) {
+          this.editing.category = foundCategory.value;
+        }
+      },
+
 
       // Functions
       update: function () {
@@ -131,6 +162,8 @@
           updates[this.key + '/comments/' + comment.$key + '/userComment'] = comment.userComment;
           return updates;
         }.bind(this), {});
+
+        updates[`${this.key}/category`] = this.editing.category;
 
         this.postsRef.update(updates)
           .then(function () {
@@ -159,10 +192,10 @@
         return !this.disabled;
       },
 
-      hasChanged: function (a, b) {
+      hasChanged: function (a, b, category) {
         const aComments = this.extractComments(a);
         const bComments = this.extractComments(b);
-        return !_.isEqual(aComments, bComments);
+        return !_.isEqual(aComments, bComments) || a.category != b.category;
       },
 
 
