@@ -10,6 +10,8 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../shared-styles.html">
 
+<link rel="import" href="../behaviors/validation.behavior.html">
+
 <dom-module id="form-view">
   <template>
     <style include="shared-styles">
@@ -123,6 +125,8 @@
     Polymer({
       is: "form-view",
 
+      behaviors: [ValidationBehavior],
+
       properties: {
         firebase: Object,
         ref: {
@@ -163,11 +167,13 @@
         },
         uploadDisabled: {
           type: Boolean,
-          computed: '_uploadDisabled(previewSrc, descriptions, descriptions.splices, changedFlag)'
+          value: true
         }
       },
 
       // Observers
+      observers: ['_uploadDisabled(previewSrc, descriptions, descriptions.splices, changedFlag)'],
+
       _ref: function (firebase) {
         return firebase.database().ref();
       },
@@ -181,7 +187,7 @@
       },
 
       _uploadDisabled: function (previewSrc, descriptions) {
-        return !previewSrc || !this.descriptionsIncludeLink(descriptions) || !this.descriptionsIncludeTwoHashtags(descriptions);
+        this.uploadDisabled = !(previewSrc && this.descriptionsIncludeLink(descriptions) && this.descriptionsIncludeTwoHashtags(descriptions));
       },
 
       handleDescriptionChange: function () {
@@ -267,6 +273,8 @@
         this.descriptions.filter(function (description) {
           return !!description;
         }).forEach(function (description) {
+          description = scrubDescription(description);
+
           var comment = {
             Dislike: 0,
             Like: 1,
@@ -331,21 +339,9 @@
 
       focusOnDescription: function () {
         this.$.description.focus();
-      },
-
-      descriptionsIncludeLink: function (descriptions) {
-        return !!descriptions.find(function (description) {
-          return !!description.match(/(http(s?):\/\/|mailto:)/);
-        });
-      },
-
-      descriptionsIncludeTwoHashtags: function (descriptions) {
-        const withHashtags = descriptions.filter(function (description) {
-          return description.match(/#\w/);
-        });
-        return withHashtags.length >= 2;
       }
 
     });
+    
   </script>
 </dom-module>

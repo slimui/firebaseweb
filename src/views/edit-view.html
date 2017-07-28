@@ -9,6 +9,8 @@
 <link rel="import" href="../shared-styles.html">
 <link rel="import" href="../datastores/imageit-datastore.html">
 
+<link rel="import" href="../behaviors/validation.behavior.html">
+
 <dom-module id="edit-view">
   <template>
     <style include="shared-styles">
@@ -44,6 +46,7 @@
       .post-details {
         padding: 1rem;
       }
+
     </style>
 
     <div style="text-align: center;">
@@ -93,7 +96,7 @@
     Polymer({
       is: "edit-view",
 
-      behaviors: [ImageitDatastoreBehavior],
+      behaviors: [ImageitDatastoreBehavior, ValidationBehavior],
 
       properties: {
         firebase: Object,
@@ -159,7 +162,8 @@
       // Functions
       update: function () {
         const updates = this.editing.comments.reduce(function (updates, comment) {
-          updates[this.key + '/comments/' + comment.$key + '/userComment'] = comment.userComment;
+          const description = this.scrubDescription(comment.userComment);
+          updates[this.key + '/comments/' + comment.$key + '/userComment'] = description;
           return updates;
         }.bind(this), {});
 
@@ -201,9 +205,7 @@
 
       hasRequirements: function (editing) {
         const comments = this.extractComments(editing);
-        const descriptionsIncludeLink = window.formView.descriptionsIncludeLink;
-        const descriptionsIncludeTwoHashtags = window.formView.descriptionsIncludeTwoHashtags;
-        return descriptionsIncludeLink(comments) && descriptionsIncludeTwoHashtags(comments);
+        return this.descriptionsIncludeLink(comments) && this.descriptionsIncludeTwoHashtags(comments);
       },
 
       extractComments: function (post) {
