@@ -30,6 +30,8 @@
 
       #preview-wrapper {
         background: transparent;
+        min-height: 33vh;
+        width: 100%;
       }
 
       #preview {
@@ -273,7 +275,7 @@
         this.descriptions.filter(function (description) {
           return !!description;
         }).forEach(function (description) {
-          description = scrubDescription(description);
+          description = this.scrubDescription(description);
 
           var comment = {
             Dislike: 0,
