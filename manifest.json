@@ -1,7 +1,7 @@
 {
-  "name": "imageit",
-  "short_name": "imageit",
-  "description": "Backend access to Imageit",
+  "name": "shoptrends",
+  "short_name": "shoptrends",
+  "description": "Backend access to ShopTrends",
   "start_url": "/",
   "display": "standalone"
 }

@@ -1,7 +1,7 @@
 {
   "name": "firebaseweb",
   "version": "1.0.0",
-  "description": "Backend access to Imageit",
+  "description": "Backend access to ShopTrends",
   "main": "index.js",
   "directories": {
     "test": "test"

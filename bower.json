@@ -1,6 +1,6 @@
 {
   "name": "imageit",
-  "description": "Backend access to Imageit",
+  "description": "Backend access to ShopTrends",
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",

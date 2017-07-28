@@ -1,6 +1,6 @@
 # \<imageit\>
 
-Backend access to Imageit
+Backend access to ShopTrends
 
 ## Install
 
