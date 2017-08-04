@@ -1,0 +1,34 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "Categories": {
+      ".read": true
+    },
+    "Users": {
+      ".indexOn": ["userID"],
+      "$uid": {
+       	".read": "$uid == auth.uid" ,
+      }      
+    },
+    "Search": {
+      "Comments": {
+        ".indexOn": ["postId"]
+      }
+    },
+    "Posts": {
+      ".indexOn": ["userId"],
+      ".read": true,
+      ".write": "auth != null",
+      "userId": {
+      	".validate": "newData.val() == auth.uid"
+      }
+    },
+    "UsersDB": {
+      "$uid": {
+        ".indexOn": ["userID"],
+      	".read": "$uid == auth.uid" 
+      }
+    }
+  }
+}

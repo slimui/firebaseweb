@@ -13,12 +13,13 @@
     "firebase-admin": "^4.0.6"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "install-local": "npm install && bower install",
     "deploy": "npm install && bower install && polymer build && firebase deploy",
     "lodash": "cd src/third-party && lodash exports=global include=cloneDeep,isEqual",
     "migrate-users": "node bin/migrate-users.js",
-    "start": "polymer serve -p 8686"
+    "start": "polymer serve -p 8686",
+    "test": "jest --config=jest.config.json",
+    "test:watch": "jest --watch --config=jest.config.json"
   },
   "repository": {
     "type": "git",
