@@ -8,7 +8,10 @@ module.exports = class LeaderboardOnRequest {
       if (req.query.auth != 'unholy-ostrich-elicit-diagnose') {
         res.status(403).send('Forbidden');
       } else {
-        return this.leaderboardService.calculateAll();
+        return this.leaderboardService.calculateAll().then(updates => {
+          res.status(200).send('OK');
+          return updates;
+        });
       }
     };
   }

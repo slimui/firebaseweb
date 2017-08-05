@@ -8,7 +8,7 @@
     "Users": {
       ".indexOn": ["userID"],
       "$uid": {
-       	".read": "$uid == auth.uid" ,
+       	".read": "$uid == auth.uid" 
       }      
     },
     "Search": {

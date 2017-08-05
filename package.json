@@ -15,6 +15,7 @@
   "scripts": {
     "install-local": "npm install && bower install",
     "deploy": "npm install && bower install && polymer build && firebase deploy",
+    "deploy:functions": "firebase deploy --only functions",
     "lodash": "cd src/third-party && lodash exports=global include=cloneDeep,isEqual",
     "migrate-users": "node bin/migrate-users.js",
     "start": "polymer serve -p 8686",

@@ -5,12 +5,12 @@ module.exports = class LikeOnWrite {
 
   getFunction() {
     return e => {
-      const previous = e.data.previous.val() || { Like: 0 };
-      const current = e.data.current.val() || { Like: 0 };
+      const previous = e.data.previous.val() || {};
+      const current = e.data.current.val() || {};
       const userId = previous.userId || current.userId;
-      const previousLike = previous.Like || 0;
-      const currentLike = current.Like || 0;
-      const diff = currentLike - previousLike;
+      const previousFavorites = Object.keys(previous.favorites || {}).length;
+      const currentFavorites = Object.keys(current.favorites || {}).length;
+      const diff = currentFavorites - previousFavorites;
       const action = diff > 0 ? 'addLike' : 'removeLike';
       const promises = [];
       let i = Math.abs(diff);

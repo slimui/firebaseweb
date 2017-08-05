@@ -1,5 +1,3 @@
-const Rx = require('@rxjs/rx');
-
 module.exports = class LeaderboardService {
   constructor({ admin, postsPath, leaderboardPath, usersPath }) {
     const badPath = 'badPath';
@@ -20,27 +18,35 @@ module.exports = class LeaderboardService {
         const userPath = this.getUserPath(user);
         updates[`${userPath}/postsCount`] = 0;
         updates[`${userPath}/likesCount`] = 0;
+        updates[`${userPath}/userName`] = user.userName;
         return updates;
       }, {});
-
+      const postsArray = this.toArray(posts);
+      const taggedPostsArray = postsArray.reduce((taggedPosts, post) => {
+        if (post.taggedPosts) {
+          taggedPosts = taggedPosts.concat(this.toArray(post.taggedPosts));
+        }
+        return taggedPosts;
+      }, []);
       const updates = this.toArray(posts).reduce((updates, post) => {
         const user = users[post.userId];
-        const userPath = this.getUserPath(user, post.userId);
-        const postsCountPath = `${userPath}/postsCount`;
-        const likesCountPath = `${userPath}/likesCount`;
-        const scorePath = `${userPath}/score`;
-        const likesCount = 0;
 
-        updates[postsCountPath]++;
+        if (user) {
+          const userPath = this.getUserPath(user, post.userId);
+          const postsCountPath = `${userPath}/postsCount`;
+          const likesCountPath = `${userPath}/likesCount`;
+          const scorePath = `${userPath}/score`;
+          const likesCount = 0;
 
-        if (post.comments) {
-          this.toArray(post.comments).forEach(comment => {
-            const like = comment.Like || 0;
-            updates[likesCountPath] += like;
-          });
+          updates[postsCountPath]++;
+
+          if (post.favorites) {
+            const favoritesCount = this.toArray(post.favorites).length;
+            updates[likesCountPath] += favoritesCount;
+          }
+
+          updates[scorePath] = updates[postsCountPath] + updates[likesCountPath];
         }
-
-        updates[scorePath] = updates[postsCountPath] + updates[likesCountPath];
 
         return updates;
       }, startingUpdates);
@@ -52,7 +58,7 @@ module.exports = class LeaderboardService {
   addPost(userId) {
     this.transact(userId, 'postsCount', this.increment);
   }
-  
+
   removePost(userId) {
     this.transact(userId, 'postsCount', this.decrement);
   }
@@ -60,18 +66,20 @@ module.exports = class LeaderboardService {
   addLike(userId) {
     this.transact(userId, 'likesCount', this.increment);
   }
-  
+
   removeLike(userId) {
     this.transact(userId, 'likesCount', this.decrement);
   }
-  
+
   transact(userId, type, func) {
-    return this.getLeaderboardUserRef(userId).then(leaderboardUserRef => {
+    return this.getLeaderboardUserRef(userId).then(({ user, leaderboardUserRef }) => {
       const countRef = leaderboardUserRef.child(type);
       const scoreRef = leaderboardUserRef.child('score');
+      const userNameRef = leaderboardUserRef.child('userName');
       return Promise.all([
         countRef.transaction(func),
         scoreRef.transaction(func),
+        userNameRef.set(user.userName),
       ]);
     });
   }
@@ -80,7 +88,8 @@ module.exports = class LeaderboardService {
     return this.usersRef.child(userId).once('value').then(snap => {
       const user = snap.val();
       const verified = this.getVerified(user);
-      return this.leaderboardRef.child(verified).child(userId);
+      const leaderboardUserRef = this.leaderboardRef.child(verified).child(userId);
+      return { user, leaderboardUserRef };
     });
   }
 
@@ -89,7 +98,7 @@ module.exports = class LeaderboardService {
   }
 
   decrement(value) {
-    return Math.min(0, (value || 0) - 1);
+    return Math.max(0, (value || 0) - 1);
   }
 
   getUserPath(user, userId) {

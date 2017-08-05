@@ -22,7 +22,12 @@ describe('LikeOnWrite', () => {
   });
 
   it('should call addLike once', done => {
-    const e = { data: new functions.database.DeltaSnapshot(null, null, null, { Like: 1, userId }) };
+    const e = {
+      data: new functions.database.DeltaSnapshot(null, null, null, {
+        favorites: getFavorites(1),
+        userId,
+      }),
+    };
 
     func(e)
       .then(() => {
@@ -35,7 +40,12 @@ describe('LikeOnWrite', () => {
 
   it('should call addLike twice', done => {
     const e = {
-      data: new functions.database.DeltaSnapshot(null, null, { Like: 1 }, { Like: 3, userId }),
+      data: new functions.database.DeltaSnapshot(
+        null,
+        null,
+        { favorites: getFavorites(1) },
+        { favorites: getFavorites(3), userId }
+      ),
     };
 
     func(e)
@@ -48,7 +58,14 @@ describe('LikeOnWrite', () => {
   });
 
   it('should call removeLike once', done => {
-    const e = { data: new functions.database.DeltaSnapshot(null, null, { Like: 1, userId }, null) };
+    const e = {
+      data: new functions.database.DeltaSnapshot(
+        null,
+        null,
+        { favorites: getFavorites(1), userId },
+        null
+      ),
+    };
 
     func(e)
       .then(() => {
@@ -61,7 +78,12 @@ describe('LikeOnWrite', () => {
 
   it('should call removeLike twice', done => {
     const e = {
-      data: new functions.database.DeltaSnapshot(null, null, { Like: 3, userId }, { Like: 1 }),
+      data: new functions.database.DeltaSnapshot(
+        null,
+        null,
+        { favorites: getFavorites(3), userId },
+        { favorites: [1] }
+      ),
     };
 
     func(e)
@@ -72,10 +94,15 @@ describe('LikeOnWrite', () => {
       })
       .catch(done.fail);
   });
-  
+
   it('should call nothing', done => {
     const e = {
-      data: new functions.database.DeltaSnapshot(null, null, { Like: 0, userId }, { Like: 0 }),
+      data: new functions.database.DeltaSnapshot(
+        null,
+        null,
+        { favorites: getFavorites(0), userId },
+        { favorites: getFavorites(0) }
+      ),
     };
 
     func(e)
@@ -85,4 +112,12 @@ describe('LikeOnWrite', () => {
       })
       .catch(done.fail);
   });
+
+  function getFavorites(i) {
+    const result = {};
+    while (i--) {
+      result[`item-${i}`] = true;
+    }
+    return result;
+  }
 });

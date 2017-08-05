@@ -2,9 +2,11 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
-    "@rxjs/rx": "^4.1.0",
     "firebase-admin": "^4.1.2",
     "firebase-functions": "^0.5",
+    "nodemailer": "^4.0.1"
+  },
+  "devDependencies": {
     "node-mocks-http": "^1.6.4"
   },
   "private": true
