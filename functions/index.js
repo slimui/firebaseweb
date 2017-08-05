@@ -35,17 +35,24 @@ exports.calculateAll = functions.https.onRequest(leaderboardOnRequest.getFunctio
 const PostOnCreate = require('./onCreate/post.onCreate');
 const postOnCreate = new PostOnCreate({ leaderboardService });
 exports.postOnCreate = functions.database.ref('Posts/{key}').onCreate(postOnCreate.getFunction());
+exports.taggedPostOnCreate = functions.database
+  .ref('Posts/{postKey}/taggedPosts/{key}')
+  .onCreate(postOnCreate.getFunction());
 
 // OnDelete
 const PostOnDelete = require('./onDelete/post.onDelete');
 const postOnDelete = new PostOnDelete({ leaderboardService });
 exports.postOnDelete = functions.database.ref('Posts/{key}').onDelete(postOnDelete.getFunction());
+exports.taggedPostOnDelete = functions.database
+  .ref('Posts/{key}/taggedPosts/{key}')
+  .onDelete(postOnDelete.getFunction());
 
 // OnWrite
 const LikeOnWrite = require('./onWrite/like.onWrite');
 const likeOnWrite = new LikeOnWrite({ leaderboardService });
-exports.likeOnWrite = functions.database
-  .ref('Posts/{postKey}')
+exports.likeOnWrite = functions.database.ref('Posts/{key}').onWrite(likeOnWrite.getFunction());
+exports.taggedPostLikeOnWrite = functions.database
+  .ref('Posts/{postKey}/taggedPosts/{key}')
   .onWrite(likeOnWrite.getFunction());
 
 // Auth
