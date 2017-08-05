@@ -43,7 +43,17 @@ describe('LeaderboardService', () => {
 
     let i = 10;
     while (i--) {
-      promises.push(postsRef.push({ userId: userOneId, favorites, userName: userOneName }));
+      promises.push(
+        postsRef.push({
+          userId: userOneId,
+          favorites,
+          userName: userOneName,
+          taggedPosts: {
+            one: { userId: userOneId, favorites, userName: userOneName },
+            two: { userId: userOneId, favorites, userName: userOneName },
+          },
+        })
+      );
       promises.push(postsRef.push({ userId: userTwoId, favorites, userName: userTwoName }));
       promises.push(
         postsRef.push({ userId: 'non-existant', favorites, userName: 'not-a-real-user-name' })
@@ -92,9 +102,9 @@ describe('LeaderboardService', () => {
       leaderboardService
         .calculateAll()
         .then(updates => {
-          expect(updates[`verified/${userOneId}/postsCount`]).toEqual(10);
-          expect(updates[`verified/${userOneId}/likesCount`]).toEqual(30);
-          expect(updates[`verified/${userOneId}/score`]).toEqual(40);
+          expect(updates[`verified/${userOneId}/postsCount`]).toEqual(30);
+          expect(updates[`verified/${userOneId}/likesCount`]).toEqual(90);
+          expect(updates[`verified/${userOneId}/score`]).toEqual(120);
           expect(updates[`verified/${userOneId}/userName`]).toEqual(userOneName);
           expect(updates[`unverified/${userTwoId}/postsCount`]).toEqual(10);
           expect(updates[`unverified/${userTwoId}/likesCount`]).toEqual(30);
@@ -136,14 +146,14 @@ describe('LeaderboardService', () => {
               'fake-user-two': {
                 postsCount: 5,
                 score: 5,
-                userName: userTwoName
+                userName: userTwoName,
               },
             },
             verified: {
               'fake-user-one': {
                 postsCount: 5,
                 score: 5,
-                userName: userOneName
+                userName: userOneName,
               },
             },
           });
@@ -177,14 +187,14 @@ describe('LeaderboardService', () => {
               'fake-user-two': {
                 likesCount: 5,
                 score: 5,
-                userName: userTwoName
+                userName: userTwoName,
               },
             },
             verified: {
               'fake-user-one': {
                 likesCount: 5,
                 score: 5,
-                userName: userOneName
+                userName: userOneName,
               },
             },
           });

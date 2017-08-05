@@ -28,7 +28,7 @@ module.exports = class LeaderboardService {
         }
         return taggedPosts;
       }, []);
-      const updates = this.toArray(posts).reduce((updates, post) => {
+      const updates = postsArray.concat(taggedPostsArray).reduce((updates, post) => {
         const user = users[post.userId];
 
         if (user) {
