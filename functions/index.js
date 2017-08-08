@@ -43,9 +43,7 @@ exports.taggedPostOnCreate = functions.database
 const PostOnDelete = require('./onDelete/post.onDelete');
 const postOnDelete = new PostOnDelete({ leaderboardService });
 exports.postOnDelete = functions.database.ref('Posts/{key}').onDelete(postOnDelete.getFunction());
-exports.taggedPostOnDelete = functions.database
-  .ref('Posts/{key}/taggedPosts/{key}')
-  .onDelete(postOnDelete.getFunction());
+exports.taggedPostOnDelete = functions.database.ref('Posts/{PostKey}/taggedPosts/{key}').onDelete(postOnDelete.getFunction());
 
 // OnWrite
 const LikeOnWrite = require('./onWrite/like.onWrite');
